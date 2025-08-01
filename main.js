@@ -4,6 +4,12 @@ let sceneIndex = 0; // 0 = Scene 1, 1 = Scene 2, 2 = Scene 3
 
 function renderScene(index) {
   const svg = d3.select("#vis");
+
+  // Style the SVG container to make it visually distinct
+  svg
+    .style("border", "1px solid #ccc")
+    .style("background-color", "#f9f9f9");
+  
   svg.selectAll("*").remove(); // Clear everything
 
   switch(index) {
