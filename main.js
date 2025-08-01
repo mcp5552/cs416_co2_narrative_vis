@@ -289,12 +289,19 @@ function renderScene2(svg) {
       .attr("fill", d => color(d.data[0]))
       .attr("stroke", "white")
       .attr("stroke-width", "1px")
+      
+      // Pie chart tooltip
       .on("mouseover", function(event, d) {
         d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
         tooltip.transition().duration(200).style("opacity", 0.9);
-        tooltip.html(`Country: ${country}<br>${d.data[0]}: ${(d.data[1]/total*100).toFixed(1)}%<br>Emissions: ${d.data[1].toFixed(2)} billion tons`)
-               .style("left", (event.pageX + 10) + "px")
-               .style("top", (event.pageY - 28) + "px");
+        tooltip.html(
+          `Country: ${country}<br>` +
+          `Fuel type: ${d.data[0]}<br>` +
+          `Percentage of Emissions: ${(d.data[1]/total*100).toFixed(1)}%<br>` +
+          `Emissions: ${d.data[1].toFixed(2)} billion tons`
+        )
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
       })
       .on("mouseout", function() {
         d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
