@@ -212,6 +212,18 @@ function renderScene2(svg) {
 
   const sceneControls = d3.select("#sceneControls");
 
+  // Tooltip div
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("background", "white")
+    .style("padding", "5px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "4px")
+    .style("pointer-events", "none")
+    .style("opacity", 0);
+
   // Populate dropdowns
   sceneControls.append("label").text("Select Country: ");
   const countryDropdown = sceneControls.append("select")
@@ -222,14 +234,12 @@ function renderScene2(svg) {
   const yearDropdown = sceneControls.append("select")
     .attr("id", "yearSelect");
 
-  // Get unique country and year values
   const countries = Array.from(new Set(data.map(d => d.country))).sort();
   const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => +a - +b);
 
   countries.forEach(c => countryDropdown.append("option").attr("value", c).text(c));
   years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
 
-  // Initial selection
   countryDropdown.property("value", "World");
   yearDropdown.property("value", "2019");
 
@@ -244,7 +254,7 @@ function renderScene2(svg) {
   });
 
   function drawPieChart(country, year) {
-    g.selectAll("*").remove(); // Clear previous chart
+    g.selectAll("*").remove();
 
     const entry = data.find(d => d.country === country && d.year === year);
     if (!entry) {
@@ -261,6 +271,7 @@ function renderScene2(svg) {
       Other: +entry.other_industry_co2 || 0
     };
 
+    const total = Object.values(sources).reduce((sum, v) => sum + v, 0);
     const pie = d3.pie().value(d => d[1]);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
 
@@ -277,18 +288,18 @@ function renderScene2(svg) {
       .attr("d", arc)
       .attr("fill", d => color(d.data[0]))
       .attr("stroke", "white")
-      .attr("stroke-width", "1px");
-
-    // Labels
-    g.selectAll("text.label")
-      .data(pieData)
-      .enter()
-      .append("text")
-      .attr("class", "label")
-      .attr("transform", d => `translate(${arc.centroid(d)})`)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "10px")
-      .text(d => `${d.data[0]}: ${d.data[1].toFixed(1)}`);
+      .attr("stroke-width", "1px")
+      .on("mouseover", function(event, d) {
+        d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
+        tooltip.transition().duration(200).style("opacity", 0.9);
+        tooltip.html(`Country: ${country}<br>${d.data[0]}: ${(d.data[1]/total*100).toFixed(1)}%<br>Emissions: ${d.data[1].toFixed(2)} billion tons`)
+               .style("left", (event.pageX + 10) + "px")
+               .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
+        tooltip.transition().duration(300).style("opacity", 0);
+      });
   }
 }
 
