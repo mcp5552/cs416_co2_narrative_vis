@@ -1,53 +1,54 @@
 // main.js
 
-// Global variables
-let sceneIndex = 0;
-let data = [];
+let sceneIndex = 0; // 0 = Scene 1, 1 = Scene 2, 2 = Scene 3
 
-// Load CSV data
-d3.csv("data/owid-co2-data.csv").then(function(loadedData) {
-  data = loadedData;
-  renderScene(sceneIndex);
-});
-
-// Render the current scene
 function renderScene(index) {
-  d3.select("#vis").html(""); // Clear existing SVG/content
+  const svg = d3.select("#vis");
+  svg.selectAll("*").remove(); // Clear everything
 
   switch(index) {
     case 0:
-      renderScene1();
+      renderScene1(svg);
       break;
     case 1:
-      renderScene2();
+      renderScene2(svg);
       break;
     case 2:
-      renderScene3();
+      renderScene3(svg);
       break;
     default:
-      console.warn("Unknown scene index:", index);
+      console.warn("Invalid scene index:", index);
   }
 }
 
-// Scene 1 placeholder
-function renderScene1() {
-  d3.select("#vis").append("p").text("Scene 1: Global CO₂ over time");
-  console.log("Rendering Scene 1");
+function renderScene1(svg) {
+  svg.append("text")
+    .attr("x", 400)
+    .attr("y", 250)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "24px")
+    .text("Scene 1: Global CO₂ Over Time");
 }
 
-// Scene 2 placeholder
-function renderScene2() {
-  d3.select("#vis").append("p").text("Scene 2: CO₂ by source (pie chart)");
-  console.log("Rendering Scene 2");
+function renderScene2(svg) {
+  svg.append("text")
+    .attr("x", 400)
+    .attr("y", 250)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "24px")
+    .text("Scene 2: CO₂ by Source");
 }
 
-// Scene 3 placeholder
-function renderScene3() {
-  d3.select("#vis").append("p").text("Scene 3: CO₂ per capita vs GDP per capita");
-  console.log("Rendering Scene 3");
+function renderScene3(svg) {
+  svg.append("text")
+    .attr("x", 400)
+    .attr("y", 250)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "24px")
+    .text("Scene 3: CO₂ per Capita vs GDP per Capita");
 }
 
-// Navigation buttons
+// Button event listeners
 d3.select("#nextBtn").on("click", () => {
   if (sceneIndex < 2) {
     sceneIndex++;
@@ -61,3 +62,6 @@ d3.select("#backBtn").on("click", () => {
     renderScene(sceneIndex);
   }
 });
+
+// Initial render
+renderScene(sceneIndex);
