@@ -1,2 +1,4 @@
-# cs416_co2_narrative_vis
-An interactive narrative visualization exploring the history of global CO₂ emissions. 
+# CS416 Narrative Visualization Project: <br> *CO₂ Emissions: How Did We Get Here?*
+
+
+An interactive narrative visualization exploring the history of global CO₂ emissions.
