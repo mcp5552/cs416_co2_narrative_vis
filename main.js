@@ -105,9 +105,9 @@ function renderScene1(svg) {
     .attr("x", width - 80)
     .attr("y", y(worldData[worldData.length - 1].co2))
     .attr("fill", "black")
-    .text("World");
+    //.text("World"); // label for "World" line
 
-// Tooltip interaction for World line
+// Tooltip interaction for "World" line
 g.selectAll(".dot")
   .data(worldData)
   .enter()
