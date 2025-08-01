@@ -3,8 +3,22 @@
 <head>
   <title>CO₂ Narrative Visualization</title>
 </head>
-<body>
+<body> <!-- Begin Body -->
+  
   <h1>CO₂ Narrative Visualization</h1>
-  <p>This site will host my CS416 final project.</p>
-</body>
+
+<div id="vis-container">
+  <svg id="vis" width="800" height="500"></svg>
+</div>
+
+<div id="nav-buttons">
+  <button id="backBtn">← Back</button>
+  <button id="nextBtn">Next →</button>
+</div>
+
+<!-- Load D3 and your script -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="main.js"></script>
+  
+</body> <!-- End Body -->
 </html>
