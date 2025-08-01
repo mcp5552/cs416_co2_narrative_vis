@@ -155,35 +155,47 @@ g.selectAll(".dot")
     .text("Clear")
     .on("click", () => {
       selectedCountries.clear();
-      sceneControls.html(""); // This clears old UI controls
-      renderScene1(svg);
+      d3.selectAll(".country-line").remove();
+      d3.selectAll("circle").filter(function() {
+        return d3.select(this).attr("class")?.startsWith("dot-");
+      }).remove();
     });
   
   function drawCountryLine(country) {
     const countryData = data.filter(d => d.country === country && d.co2 && d.year)
                             .map(d => ({year: +d.year, co2: +d.co2}));
+  
+    const color = d3.schemeCategory10[selectedCountries.size % 10];
+  
+    // Draw line
     g.append("path")
       .datum(countryData)
+      .attr("class", "country-line")
       .attr("fill", "none")
-      .attr("stroke", d3.schemeCategory10[selectedCountries.size % 10])
+      .attr("stroke", color)
       .attr("stroke-width", 2)
       .attr("d", line);
-
+  
+    // Invisible dots for tooltip (show on hover only)
     g.selectAll(".dot-" + country.replace(/\s+/g, ""))
       .data(countryData)
       .enter()
       .append("circle")
+      .attr("class", "dot-" + country.replace(/\s+/g, ""))
       .attr("cx", d => x(d.year))
       .attr("cy", d => y(d.co2))
       .attr("r", 4)
-      .attr("fill", d3.schemeCategory10[selectedCountries.size % 10])
-      .on("mouseover", (event, d) => {
+      .attr("fill", color)
+      .style("opacity", 0)
+      .on("mouseover", function(event, d) {
+        d3.select(this).style("opacity", 1);
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip.html(`Country: ${country}<br>Year: ${d.year}<br>CO₂ Emissions: ${d.co2.toFixed(2)} billion tons`)
                .style("left", (event.pageX + 10) + "px")
                .style("top", (event.pageY - 28) + "px");
       })
-      .on("mouseout", () => {
+      .on("mouseout", function() {
+        d3.select(this).style("opacity", 0);
         tooltip.transition().duration(300).style("opacity", 0);
       });
   }
