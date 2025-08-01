@@ -107,24 +107,28 @@ function renderScene1(svg) {
     .attr("fill", "black")
     .text("World");
 
-  // Tooltip interaction for World line
-  g.selectAll(".dot")
-    .data(worldData)
-    .enter()
-    .append("circle")
-    .attr("cx", d => x(d.year))
-    .attr("cy", d => y(d.co2))
-    .attr("r", 4)
-    .attr("fill", "black")
-    .on("mouseover", (event, d) => {
-      tooltip.transition().duration(200).style("opacity", 0.9);
-      tooltip.html(`Country: World<br>Year: ${d.year}<br>CO₂ Emissions: ${d.co2.toFixed(2)} billion tons`)
-             .style("left", (event.pageX + 10) + "px")
-             .style("top", (event.pageY - 28) + "px");
-    })
-    .on("mouseout", () => {
-      tooltip.transition().duration(300).style("opacity", 0);
-    });
+// Tooltip interaction for World line
+g.selectAll(".dot")
+  .data(worldData)
+  .enter()
+  .append("circle")
+  .attr("class", "dot")
+  .attr("cx", d => x(d.year))
+  .attr("cy", d => y(d.co2))
+  .attr("r", 4)
+  .attr("fill", "black")
+  .style("opacity", 0)  // Make all dots transparent initially
+  .on("mouseover", function(event, d) {
+    d3.select(this).style("opacity", 1);  // Highlight hovered dot
+    tooltip.transition().duration(200).style("opacity", 0.9);
+    tooltip.html(`Country: World<br>Year: ${d.year}<br>CO₂ Emissions: ${d.co2.toFixed(2)} billion tons`)
+           .style("left", (event.pageX + 10) + "px")
+           .style("top", (event.pageY - 28) + "px");
+  })
+  .on("mouseout", function() {
+    d3.select(this).style("opacity", 0);  // Re-hide dot
+    tooltip.transition().duration(300).style("opacity", 0);
+  });
 
   // Add controls
   const sceneControls = d3.select("#sceneControls");
@@ -146,13 +150,15 @@ function renderScene1(svg) {
     dropdown.append("option").attr("value", country).text(country);
   });
 
+  // "Clear" button
   sceneControls.append("button")
     .text("Clear")
     .on("click", () => {
       selectedCountries.clear();
+      sceneControls.html(""); // This clears old UI controls
       renderScene1(svg);
     });
-
+  
   function drawCountryLine(country) {
     const countryData = data.filter(d => d.country === country && d.co2 && d.year)
                             .map(d => ({year: +d.year, co2: +d.co2}));
