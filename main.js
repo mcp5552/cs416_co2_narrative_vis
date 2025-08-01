@@ -241,9 +241,9 @@ function renderScene2(svg) {
   years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
 
   countryDropdown.property("value", "World");
-  yearDropdown.property("value", "2019");
+  yearDropdown.property("value", "2023");
 
-  drawPieChart("World", "2019");
+  drawPieChart("World", "2023");
 
   countryDropdown.on("change", () => {
     drawPieChart(countryDropdown.property("value"), yearDropdown.property("value"));
