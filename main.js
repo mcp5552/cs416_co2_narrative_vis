@@ -202,12 +202,94 @@ g.selectAll(".dot")
 }
 
 function renderScene2(svg) {
-  svg.append("text")
-    .attr("x", 400)
-    .attr("y", 250)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "24px")
-    .text("Scene 2: CO₂ by Source");
+  const margin = {top: 50, right: 30, bottom: 50, left: 30};
+  const width = +svg.attr("width") - margin.left - margin.right;
+  const height = +svg.attr("height") - margin.top - margin.bottom;
+  const radius = Math.min(width, height) / 2 - 50;
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left + width / 2},${margin.top + height / 2})`);
+
+  const sceneControls = d3.select("#sceneControls");
+
+  // Populate dropdowns
+  sceneControls.append("label").text("Select Country: ");
+  const countryDropdown = sceneControls.append("select")
+    .attr("id", "countrySelect")
+    .style("margin-right", "20px");
+
+  sceneControls.append("label").text("Select Year: ");
+  const yearDropdown = sceneControls.append("select")
+    .attr("id", "yearSelect");
+
+  // Get unique country and year values
+  const countries = Array.from(new Set(data.map(d => d.country))).sort();
+  const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => +a - +b);
+
+  countries.forEach(c => countryDropdown.append("option").attr("value", c).text(c));
+  years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
+
+  // Initial selection
+  countryDropdown.property("value", "World");
+  yearDropdown.property("value", "2019");
+
+  drawPieChart("World", "2019");
+
+  countryDropdown.on("change", () => {
+    drawPieChart(countryDropdown.property("value"), yearDropdown.property("value"));
+  });
+
+  yearDropdown.on("change", () => {
+    drawPieChart(countryDropdown.property("value"), yearDropdown.property("value"));
+  });
+
+  function drawPieChart(country, year) {
+    g.selectAll("*").remove(); // Clear previous chart
+
+    const entry = data.find(d => d.country === country && d.year === year);
+    if (!entry) {
+      g.append("text").text("No data available").attr("text-anchor", "middle");
+      return;
+    }
+
+    const sources = {
+      Coal: +entry.coal_co2 || 0,
+      Oil: +entry.oil_co2 || 0,
+      Gas: +entry.gas_co2 || 0,
+      Cement: +entry.cement_co2 || 0,
+      Flaring: +entry.flaring_co2 || 0,
+      Other: +entry.other_industry_co2 || 0
+    };
+
+    const pie = d3.pie().value(d => d[1]);
+    const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+    const color = d3.scaleOrdinal()
+      .domain(Object.keys(sources))
+      .range(d3.schemeCategory10);
+
+    const pieData = pie(Object.entries(sources).filter(d => d[1] > 0));
+
+    const arcs = g.selectAll("path")
+      .data(pieData)
+      .enter()
+      .append("path")
+      .attr("d", arc)
+      .attr("fill", d => color(d.data[0]))
+      .attr("stroke", "white")
+      .attr("stroke-width", "1px");
+
+    // Labels
+    g.selectAll("text.label")
+      .data(pieData)
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", d => `translate(${arc.centroid(d)})`)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "10px")
+      .text(d => `${d.data[0]}: ${d.data[1].toFixed(1)}`);
+  }
 }
 
 function renderScene3(svg) {
