@@ -1,8 +1,8 @@
 // main.js
 
 let sceneIndex = 0; // 0 = Scene 1, 1 = Scene 2, 2 = Scene 3
-let data = [];      // Global CSV data
-let selectedCountries = ["World"]; // Scene 1 starts with World
+let data = []; // Global CSV data
+let selectedCountries = new Set();
 
 // Load data and render first scene
 d3.csv("data/owid-co2-data.csv").then(function(loadedData) {
@@ -12,14 +12,12 @@ d3.csv("data/owid-co2-data.csv").then(function(loadedData) {
 
 function renderScene(index) {
   const svg = d3.select("#vis");
-
-  // Style the SVG container to make it visually distinct
   svg
     .style("border", "1px solid #ccc")
     .style("background-color", "#f9f9f9");
+  svg.selectAll("*").remove();
 
-  svg.selectAll("*").remove();                 // Clear SVG
-  d3.select("#sceneControls").html("");        // Clear scene-specific UI
+  d3.select("#sceneControls").html("");
 
   switch(index) {
     case 0:
@@ -37,64 +35,22 @@ function renderScene(index) {
 }
 
 function renderScene1(svg) {
-  // Scene 1 UI: dropdown + clear
-  const controls = d3.select("#sceneControls");
-
-  controls.append("label")
-    .attr("for", "countrySelect")
-    .text("Add country: ");
-
-  controls.append("select")
-    .attr("id", "countrySelect")
-    .selectAll("option")
-    .data([...new Set(data.map(d => d.country))].sort())
-    .join("option")
-    .attr("value", d => d)
-    .text(d => d);
-
-  controls.append("button")
-    .attr("id", "clearBtn")
-    .text("Clear");
-
-  d3.select("#countrySelect").on("change", function () {
-    const newCountry = this.value;
-    if (!selectedCountries.includes(newCountry)) {
-      selectedCountries.push(newCountry);
-      renderScene(sceneIndex);
-    }
-  });
-
-  d3.select("#clearBtn").on("click", function () {
-    selectedCountries = ["World"];
-    renderScene(sceneIndex);
-  });
-
-  // Filter and format data
-  const plotData = data
-    .filter(d => selectedCountries.includes(d.country) && d.co2 !== "")
-    .map(d => ({
-      country: d.country,
-      year: +d.year,
-      co2: +d.co2
-    }));
-
-  // Set up margins and dimensions
-  const margin = { top: 50, right: 30, bottom: 60, left: 80 };
+  const margin = {top: 50, right: 30, bottom: 50, left: 70};
   const width = +svg.attr("width") - margin.left - margin.right;
   const height = +svg.attr("height") - margin.top - margin.bottom;
-
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Scales
+  const worldData = data.filter(d => d.country === "World" && d.co2 && d.year)
+                        .map(d => ({year: +d.year, co2: +d.co2}));
+
   const x = d3.scaleLinear()
-    .domain(d3.extent(plotData, d => d.year))
-    .range([0, width]);
+              .domain(d3.extent(worldData, d => d.year))
+              .range([0, width]);
 
   const y = d3.scaleLinear()
-    .domain([0, d3.max(plotData, d => d.co2)])
-    .range([height, 0]);
+              .domain([0, d3.max(data, d => +d.co2 || 0)])
+              .range([height, 0]);
 
-  // Axes
   g.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).tickFormat(d3.format("d")));
@@ -104,47 +60,127 @@ function renderScene1(svg) {
 
   // Axis labels
   svg.append("text")
-    .attr("x", 400)
+    .attr("x", margin.left + width / 2)
     .attr("y", 490)
     .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
     .text("Year");
 
   svg.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -250)
-    .attr("y", 20)
+    .attr("transform", `translate(15,${margin.top + height / 2}) rotate(-90)`)
     .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
-    .text("CO₂ emissions (billions of tons)");
+    .text("CO₂ Emissions (billion tons)");
 
-  // Chart title
+  // Title
   svg.append("text")
-    .attr("x", 400)
+    .attr("x", margin.left + width / 2)
     .attr("y", 30)
     .attr("text-anchor", "middle")
     .attr("font-size", "20px")
     .text("CO₂ Emission by Year");
 
-  // Line generator
+  // Tooltip div
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("background", "white")
+    .style("padding", "5px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "4px")
+    .style("pointer-events", "none")
+    .style("opacity", 0);
+
   const line = d3.line()
     .x(d => x(d.year))
     .y(d => y(d.co2));
 
-  // Group data by country
-  const countries = d3.group(plotData, d => d.country);
+  g.append("path")
+    .datum(worldData)
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", 2)
+    .attr("d", line);
 
-  const color = d3.scaleOrdinal(d3.schemeCategory10)
-    .domain(selectedCountries);
+  g.append("text")
+    .attr("x", width - 80)
+    .attr("y", y(worldData[worldData.length - 1].co2))
+    .attr("fill", "black")
+    .text("World");
 
-  countries.forEach((values, country) => {
+  // Tooltip interaction for World line
+  g.selectAll(".dot")
+    .data(worldData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d.co2))
+    .attr("r", 4)
+    .attr("fill", "black")
+    .on("mouseover", (event, d) => {
+      tooltip.transition().duration(200).style("opacity", 0.9);
+      tooltip.html(`Country: World<br>Year: ${d.year}<br>CO₂ Emissions: ${d.co2.toFixed(2)} billion tons`)
+             .style("left", (event.pageX + 10) + "px")
+             .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
+
+  // Add controls
+  const sceneControls = d3.select("#sceneControls");
+
+  sceneControls.append("label").text("Select Country: ");
+  const dropdown = sceneControls.append("select")
+    .attr("id", "countryDropdown")
+    .style("margin-right", "10px")
+    .on("change", function() {
+      const country = this.value;
+      if (!selectedCountries.has(country)) {
+        selectedCountries.add(country);
+        drawCountryLine(country);
+      }
+    });
+
+  const uniqueCountries = Array.from(new Set(data.map(d => d.country))).sort();
+  uniqueCountries.forEach(country => {
+    dropdown.append("option").attr("value", country).text(country);
+  });
+
+  sceneControls.append("button")
+    .text("Clear")
+    .on("click", () => {
+      selectedCountries.clear();
+      renderScene1(svg);
+    });
+
+  function drawCountryLine(country) {
+    const countryData = data.filter(d => d.country === country && d.co2 && d.year)
+                            .map(d => ({year: +d.year, co2: +d.co2}));
     g.append("path")
-      .datum(values)
+      .datum(countryData)
       .attr("fill", "none")
-      .attr("stroke", color(country))
+      .attr("stroke", d3.schemeCategory10[selectedCountries.size % 10])
       .attr("stroke-width", 2)
       .attr("d", line);
-  });
+
+    g.selectAll(".dot-" + country.replace(/\s+/g, ""))
+      .data(countryData)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(d.year))
+      .attr("cy", d => y(d.co2))
+      .attr("r", 4)
+      .attr("fill", d3.schemeCategory10[selectedCountries.size % 10])
+      .on("mouseover", (event, d) => {
+        tooltip.transition().duration(200).style("opacity", 0.9);
+        tooltip.html(`Country: ${country}<br>Year: ${d.year}<br>CO₂ Emissions: ${d.co2.toFixed(2)} billion tons`)
+               .style("left", (event.pageX + 10) + "px")
+               .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", () => {
+        tooltip.transition().duration(300).style("opacity", 0);
+      });
+  }
 }
 
 function renderScene2(svg) {
@@ -165,7 +201,6 @@ function renderScene3(svg) {
     .text("Scene 3: CO₂ per Capita vs GDP per Capita");
 }
 
-// Scene navigation buttons (next & back)
 d3.select("#nextBtn").on("click", () => {
   if (sceneIndex < 2) {
     sceneIndex++;
