@@ -1,4 +1,8 @@
-// main.js
+// main.js 
+// D3.js script for rendering interactive CO₂ visualizations across three scenes:
+// Scene 1: Line plot of CO₂ emissions over time (world + selectable countries)
+// Scene 2: Pie chart of CO₂ emissions by fuel type for a selected country and year
+// Scene 3: Scatter plot of CO₂ per capita vs GDP per capita, with bubble size showing population
 
 let sceneIndex = 0; // 0 = Scene 1, 1 = Scene 2, 2 = Scene 3
 let data = []; // Global CSV data
@@ -34,6 +38,7 @@ function renderScene(index) {
   }
 }
 
+// Scene 1: Line plot of CO₂ emissions over time (world + selectable countries)
 function renderScene1(svg) {
   const margin = {top: 50, right: 30, bottom: 50, left: 70};
   const width = +svg.attr("width") - margin.left - margin.right;
@@ -201,6 +206,7 @@ g.selectAll(".dot")
   }
 }
 
+// Scene 2: Pie chart of CO₂ emissions by fuel type for a selected country and year
 function renderScene2(svg) {
   const margin = {top: 50, right: 30, bottom: 50, left: 30};
   const width = +svg.attr("width") - margin.left - margin.right;
@@ -310,15 +316,100 @@ function renderScene2(svg) {
   }
 }
 
+// Scene 3: Scatter plot of CO₂ per capita vs GDP per capita, with bubble size showing population
 function renderScene3(svg) {
-  svg.append("text")
-    .attr("x", 400)
-    .attr("y", 250)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "24px")
-    .text("Scene 3: CO₂ per Capita vs GDP per Capita");
+  const margin = {top: 50, right: 30, bottom: 50, left: 70};
+  const width = +svg.attr("width") - margin.left - margin.right;
+  const height = +svg.attr("height") - margin.top - margin.bottom;
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const sceneControls = d3.select("#sceneControls");
+
+  sceneControls.append("label").text("Select Year: ");
+  const yearDropdown = sceneControls.append("select")
+    .attr("id", "yearDropdown")
+    .style("margin-right", "20px");
+
+  const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => +a - +b);
+  years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
+  yearDropdown.property("value", "2023");
+
+  drawScatter("2023");
+
+  yearDropdown.on("change", () => {
+    drawScatter(yearDropdown.property("value"));
+  });
+
+  function drawScatter(selectedYear) {
+    g.selectAll("*").remove();
+
+    const yearData = data.filter(d => d.year === selectedYear && d.co2_per_capita && d.gdp_per_capita && d.population);
+
+    const x = d3.scaleLinear()
+      .domain([0, d3.max(yearData, d => +d.gdp_per_capita)])
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(yearData, d => +d.co2_per_capita)])
+      .range([height, 0]);
+
+    const r = d3.scaleSqrt()
+      .domain([0, d3.max(yearData, d => +d.population)])
+      .range([2, 20]);
+
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x));
+
+    g.append("g")
+      .call(d3.axisLeft(y));
+
+    g.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + 40)
+      .attr("text-anchor", "middle")
+      .text("GDP per Capita (USD)");
+
+    g.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", -50)
+      .attr("text-anchor", "middle")
+      .text("CO₂ per Capita (tons)");
+
+    const tooltip = d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "5px")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    g.selectAll("circle")
+      .data(yearData)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(+d.gdp_per_capita))
+      .attr("cy", d => y(+d.co2_per_capita))
+      .attr("r", d => r(+d.population))
+      .attr("fill", "steelblue")
+      .attr("opacity", 0.7)
+      .on("mouseover", function(event, d) {
+        tooltip.transition().duration(200).style("opacity", 0.9);
+        tooltip.html(`Country: ${d.country}<br>GDP per Capita: $${(+d.gdp_per_capita).toLocaleString()}<br>CO₂ per Capita: ${(+d.co2_per_capita).toFixed(2)} tons<br>Population: ${(+d.population).toLocaleString()}`)
+               .style("left", (event.pageX + 10) + "px")
+               .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        tooltip.transition().duration(300).style("opacity", 0);
+      });
+  }
 }
 
+// Navigation buttons for switching between scenes
 d3.select("#nextBtn").on("click", () => {
   if (sceneIndex < 2) {
     sceneIndex++;
