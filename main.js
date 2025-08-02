@@ -36,6 +36,8 @@ function renderScene(index) {
     default:
       console.warn("Invalid scene index:", index);
   }
+  // Page indicator
+  d3.select("#pageIndicator").text(`Page: ${index + 1} / 3`);
 }
 
 // Scene 1: Line plot of CO₂ emissions over time (world + selectable countries)
@@ -266,8 +268,17 @@ function renderScene2(svg) {
 
   function drawPieChart(country, year) {
     g.selectAll("*").remove();
+    svg.selectAll(".scene-title").remove(); // Remove previous title
+    svg.append("text")
+      .attr("class", "scene-title")
+      .attr("x", svg.attr("width") / 2)
+      .attr("y", 40)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "20px")
+      .text(`Emissions Breakdown: ${country}`);
 
     const entry = data.find(d => d.country === country && d.year === year);
+    
     if (!entry) {
       g.append("text").text("No data available").attr("text-anchor", "middle");
       return;
@@ -306,7 +317,6 @@ function renderScene2(svg) {
         d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip.html(
-          `Country: ${country}<br>` +
           `Fuel type: ${d.data[0]}<br>` +
           `Percentage of Emissions: ${(d.data[1]/total*100).toFixed(1)}%<br>` +
           `Emissions: ${d.data[1].toFixed(2)} billion tons`
@@ -348,6 +358,14 @@ function renderScene3(svg) {
 
   function drawScatter(selectedYear) {
     g.selectAll("*").remove();
+    svg.selectAll(".scene-title").remove(); // Clear any previous title
+    svg.append("text")
+      .attr("class", "scene-title")
+      .attr("x", svg.attr("width") / 2)
+      .attr("y", 40)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "20px")
+      .text("CO₂ per Capita (tons) vs GDP per Capita (USD)");
 
     // Debugging logs
     console.log("Example row before filtering:", data[0]);
