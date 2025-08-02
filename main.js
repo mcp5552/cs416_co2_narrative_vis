@@ -324,6 +324,7 @@ function renderScene3(svg) {
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
   const sceneControls = d3.select("#sceneControls");
+  sceneControls.html(""); // Clear previous controls
 
   sceneControls.append("label").text("Select Year: ");
   const yearDropdown = sceneControls.append("select")
@@ -340,7 +341,6 @@ function renderScene3(svg) {
     drawScatter(yearDropdown.property("value"));
   });
 
-  // All rendering stays inside this function
   function drawScatter(selectedYear) {
     g.selectAll("*").remove();
 
@@ -352,14 +352,14 @@ function renderScene3(svg) {
     const yearData = data.filter(d =>
       String(d.year).trim() === String(selectedYear).trim() &&
       !isNaN(+d.co2_per_capita) &&
-      !isNaN(+d.gdp_per_capita) &&
+      !isNaN(+d.gdp) &&
       !isNaN(+d.population)
     );
 
     console.log("Filtered data points:", yearData.length, yearData);
 
     const x = d3.scaleLinear()
-      .domain([0, d3.max(yearData, d => +d.gdp_per_capita)])
+      .domain([0, d3.max(yearData, d => +d.gdp / +d.population)])  // fixed
       .range([0, width]);
 
     const y = d3.scaleLinear()
@@ -405,16 +405,21 @@ function renderScene3(svg) {
       .data(yearData)
       .enter()
       .append("circle")
-      .attr("cx", d => x(+d.gdp_per_capita))
+      .attr("cx", d => x(+d.gdp / +d.population))  // fixed
       .attr("cy", d => y(+d.co2_per_capita))
       .attr("r", d => r(+d.population))
       .attr("fill", "steelblue")
       .attr("opacity", 0.7)
       .on("mouseover", function(event, d) {
         tooltip.transition().duration(200).style("opacity", 0.9);
-        tooltip.html(`Country: ${d.country}<br>GDP per Capita: $${(+d.gdp_per_capita).toLocaleString()}<br>CO₂ per Capita: ${(+d.co2_per_capita).toFixed(2)} tons<br>Population: ${(+d.population).toLocaleString()}`)
-               .style("left", (event.pageX + 10) + "px")
-               .style("top", (event.pageY - 28) + "px");
+        tooltip.html(
+          `Country: ${d.country}<br>` +
+          `GDP per Capita: $${(+d.gdp / +d.population).toLocaleString()}<br>` +
+          `CO₂ per Capita: ${(+d.co2_per_capita).toFixed(2)} tons<br>` +
+          `Population: ${(+d.population).toLocaleString()}`
+        )
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
       })
       .on("mouseout", function() {
         tooltip.transition().duration(300).style("opacity", 0);
