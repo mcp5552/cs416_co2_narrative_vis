@@ -352,16 +352,6 @@ function renderScene3(svg) {
       !isNaN(+d.population)
     );
 
-  function drawScatter(selectedYear) {
-    g.selectAll("*").remove();
-
-    const yearData = data.filter(d =>
-      d.year === selectedYear &&
-      !isNaN(+d.co2_per_capita) &&
-      !isNaN(+d.gdp_per_capita) &&
-      !isNaN(+d.population)
-    );
-
     const x = d3.scaleLinear()
       .domain([0, d3.max(yearData, d => +d.gdp_per_capita)])
       .range([0, width]);
