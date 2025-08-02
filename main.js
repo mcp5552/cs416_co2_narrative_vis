@@ -252,9 +252,9 @@ function renderScene2(svg) {
   years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
 
   countryDropdown.property("value", "World");
-  yearDropdown.property("value", "2023");
+  yearDropdown.property("value", "2022");
 
-  drawPieChart("World", "2023");
+  drawPieChart("World", "2022");
 
   countryDropdown.on("change", () => {
     drawPieChart(countryDropdown.property("value"), yearDropdown.property("value"));
@@ -338,9 +338,9 @@ function renderScene3(svg) {
 
   const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => +a - +b);
   years.forEach(y => yearDropdown.append("option").attr("value", y).text(y));
-  yearDropdown.property("value", "2023");
+  yearDropdown.property("value", "2022");
 
-  drawScatter("2023");
+  drawScatter("2022");
 
   yearDropdown.on("change", () => {
     drawScatter(yearDropdown.property("value"));
