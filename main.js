@@ -7,6 +7,22 @@
 let sceneIndex = 0; // 0 = Scene 1, 1 = Scene 2, 2 = Scene 3
 let data = []; // Global CSV data
 let selectedCountries = new Set();
+let annoPage = 0; // current annotation page variable
+
+const annotations = [
+  [  // Scene 1 annotations
+    "Global CO₂ emissions have steadily risen since the Industrial Revolution.",
+    "Notice how emissions rise rapidly post-1950 due to industrialization."
+  ],
+  [  // Scene 2 annotations
+    "This chart shows the sources of emissions in a selected country and year.",
+    "Coal and oil are the dominant fuels for most countries."
+  ],
+  [  // Scene 3 annotations
+    "There is a general correlation between GDP per capita and CO₂ per capita.",
+    "Note how some countries deviate from the trend—either due to clean energy or inefficiency."
+  ]
+];
 
 // Load data and render first scene
 d3.csv("data/owid-co2-data.csv").then(function(loadedData) {
@@ -36,8 +52,12 @@ function renderScene(index) {
     default:
       console.warn("Invalid scene index:", index);
   }
-  // Page indicator
-  d3.select("#pageIndicator").text(`Page: ${index + 1} / 3`);
+        // Update page indicator
+      d3.select("#pageIndicator").text(`Page: ${index + 1} / 3`);
+
+      // Reset and render annotation
+      annoPage = 0;
+      updateAnnotation();
 }
 
 // Scene 1: Line plot of CO₂ emissions over time (world + selectable countries)
@@ -456,6 +476,28 @@ function renderScene3(svg) {
       });
   }
 }
+
+function updateAnnotation() {
+  const text = annotations[sceneIndex][annoPage];
+  const total = annotations[sceneIndex].length;
+  d3.select("#annotationText").text(text);
+  d3.select("#annoIndicator").text(`Text Page: ${annoPage + 1} / ${total}`);
+}
+
+// Next/Prev button
+d3.select("#nextAnnoBtn").on("click", () => {
+  if (annoPage < annotations[sceneIndex].length - 1) {
+    annoPage++;
+    updateAnnotation();
+  }
+});
+
+d3.select("#prevAnnoBtn").on("click", () => {
+  if (annoPage > 0) {
+    annoPage--;
+    updateAnnotation();
+  }
+});
 
 // Navigation buttons for switching between scenes
 d3.select("#nextBtn").on("click", () => {
