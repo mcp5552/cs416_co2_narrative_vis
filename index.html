@@ -36,15 +36,25 @@
   </div>
 
   <!-- Anotation container -->
-  <div id="annotationBox" style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
-  <div id="annotationText" style="min-height: 80px;"></div>
-  <div style="text-align: right;">
-    <button id="prevAnnoBtn">←</button>
-    <span id="annoIndicator">Text Page: 1 / N</span>
-    <button id="nextAnnoBtn">→</button>
-  </div>
-</div>
+  <style>
+    #annotationBox {
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      background-color: #f2f2f2; /* light gray fill */
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
   
+  <div id="annotationBox">
+    <div id="annotationText" style="min-height: 80px;"></div>
+    <div style="text-align: left;">
+      <button id="prevAnnoBtn">←</button>
+      <span id="annoIndicator">Text Page: 1 / N</span>
+      <button id="nextAnnoBtn">→</button>
+    </div>
+  </div>
+    
   <!-- Load D3 and script -->
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="main.js"></script>
