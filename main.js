@@ -481,7 +481,7 @@ function updateAnnotation() {
   const text = annotations[sceneIndex][annoPage];
   const total = annotations[sceneIndex].length;
   d3.select("#annotationText").text(text);
-  d3.select("#annoIndicator").text(`Text Page: ${annoPage + 1} / ${total}`);
+  d3.select("#annoIndicator").text(`Annotation Page: ${annoPage + 1} / ${total}`);
 }
 
 // Next/Prev button
