@@ -53,7 +53,7 @@ function renderScene(index) {
       console.warn("Invalid scene index:", index);
   }
         // Update page indicator
-      d3.select("#pageIndicator").text(`Page: ${index + 1} / 3`);
+      d3.select("#pageIndicator").text(`Slide: ${index + 1} / 3`);
 
       // Reset and render annotation
       annoPage = 0;
