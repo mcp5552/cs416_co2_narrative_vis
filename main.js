@@ -340,19 +340,23 @@ function renderScene3(svg) {
     drawScatter(yearDropdown.property("value"));
   });
 
-  // Function for clearing previous scatter plot and filtering data for the selected year.
+  // All rendering stays inside this function
   function drawScatter(selectedYear) {
     g.selectAll("*").remove();
-  
-    // Only include rows with valid numeric values for CO₂ per capita, GDP per capita, and population.
+
+    // Debugging logs
+    console.log("Example row before filtering:", data[0]);
+    console.log("Column names in data:", Object.keys(data[0]));
+    console.log("Selected year (from dropdown):", selectedYear);
+
     const yearData = data.filter(d =>
-      String(d.year) === String(selectedYear) && // Ensure year matches as string
+      String(d.year).trim() === String(selectedYear).trim() &&
       !isNaN(+d.co2_per_capita) &&
       !isNaN(+d.gdp_per_capita) &&
       !isNaN(+d.population)
     );
-  
-    console.log("Filtered data points:", yearData.length, yearData);  // Log AFTER filtering
+
+    console.log("Filtered data points:", yearData.length, yearData);
 
     const x = d3.scaleLinear()
       .domain([0, d3.max(yearData, d => +d.gdp_per_capita)])
