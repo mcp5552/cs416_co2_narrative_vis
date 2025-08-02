@@ -83,6 +83,9 @@ function renderScene1(svg) {
     .attr("font-size", "20px")
     .text("CO₂ Emission by Year");
 
+  // Clean up existing tooltips before creating new one
+  d3.selectAll(".tooltip").remove(); 
+
   // Tooltip div
   const tooltip = d3.select("body")
     .append("div")
@@ -218,6 +221,8 @@ function renderScene2(svg) {
 
   const sceneControls = d3.select("#sceneControls");
 
+  d3.selectAll(".tooltip").remove(); // Clean existing tooltips before creaitng new one
+  
   // Tooltip div
   const tooltip = d3.select("body")
     .append("div")
@@ -351,15 +356,21 @@ function renderScene3(svg) {
 
     const yearData = data.filter(d =>
       String(d.year).trim() === String(selectedYear).trim() &&
-      !isNaN(+d.co2_per_capita) &&
-      !isNaN(+d.gdp) &&
-      !isNaN(+d.population)
+      d.gdp && +d.gdp > 0 &&
+      d.population && +d.population > 0 &&
+      d.co2_per_capita && +d.co2_per_capita > 0
     );
 
-    console.log("Filtered data points:", yearData.length, yearData);
+    // Compute GDP per capita
+    yearData.forEach(d => {
+      d.gdp_per_capita = +d.gdp / +d.population;
+    });
+
+    console.log("Filtered data points:", yearData.length);
+    console.log("Sample GDP per capita:", yearData.slice(0, 5).map(d => d.gdp_per_capita));
 
     const x = d3.scaleLinear()
-      .domain([0, d3.max(yearData, d => +d.gdp / +d.population)])  // fixed
+      .domain([0, d3.max(yearData, d => d.gdp_per_capita)])
       .range([0, width]);
 
     const y = d3.scaleLinear()
@@ -390,6 +401,7 @@ function renderScene3(svg) {
       .attr("text-anchor", "middle")
       .text("CO₂ per Capita (tons)");
 
+    d3.selectAll(".tooltip").remove(); // clean existing tooltips before creating new ones
     const tooltip = d3.select("body")
       .append("div")
       .attr("class", "tooltip")
@@ -405,7 +417,7 @@ function renderScene3(svg) {
       .data(yearData)
       .enter()
       .append("circle")
-      .attr("cx", d => x(+d.gdp / +d.population))  // fixed
+      .attr("cx", d => x(d.gdp_per_capita))
       .attr("cy", d => y(+d.co2_per_capita))
       .attr("r", d => r(+d.population))
       .attr("fill", "steelblue")
@@ -414,7 +426,7 @@ function renderScene3(svg) {
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip.html(
           `Country: ${d.country}<br>` +
-          `GDP per Capita: $${(+d.gdp / +d.population).toLocaleString()}<br>` +
+          `GDP per Capita: $${d.gdp_per_capita.toFixed(0).toLocaleString()}<br>` +
           `CO₂ per Capita: ${(+d.co2_per_capita).toFixed(2)} tons<br>` +
           `Population: ${(+d.population).toLocaleString()}`
         )
