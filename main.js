@@ -26,8 +26,8 @@ const annotations = [
   [ // Scene 2 annotations
   "This chart breaks down CO₂ emissions by fuel source for a selected country and year, including coal, oil, gas, cement, flaring, and other industries.",
   "Globally, coal accounts for about 40–41% of total CO₂ emissions, making it the single largest contributor among fossil fuels.",
-  "Oil contributes roughly 32%, driven largely by transportation and industrial sectors.",
-  "Natural gas makes up around 21–23%, and its share is increasing in many countries.",
+  "Oil contributes roughly 32% of global emissions, driven largely by transportation and industrial sectors.",
+  "Natural gas makes up around 21–23% of global emissions, and its share is increasing in many countries.",
   "Cement production contributes around 4–8% of global CO₂ emissions, mostly from chemical processes and heating requirements.",
   "Flaring and other industrial sources typically account for 2–3%, varying by country and sector.",
   "In Asia, coal remains dominant, especially in rapidly industrializing nations, explaining large coal segments in many countries' fuel mixes.",
