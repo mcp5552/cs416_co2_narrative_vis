@@ -10,10 +10,19 @@ let selectedCountries = new Set();
 let annoPage = 0; // current annotation page variable
 
 const annotations = [
-  [  // Scene 1 annotations
-    "Global CO₂ emissions have steadily risen since the Industrial Revolution.",
-    "Notice how emissions rise rapidly post-1950 due to industrialization."
-  ],
+[  // Scene 1 annotations
+  "This chart shows the rise of global CO₂ emissions since the Industrial Revolution.",
+  "Global CO₂ emissions were negligible before the Industrial Revolution.",
+  "In 1950, global emissions totaled about 6 billion tonnes—quadrupling by 1990.",
+  "Today, we emit over 35 billion tonnes of CO₂ per year globally.",
+  "Until 1950, Europe and the US accounted for over 85% of emissions.",
+  "China surpassed Germany in emissions during the 1970s.",
+  "Asia now produces more than half of global CO₂ emissions.",
+  "The United States has the highest historical CO₂ emissions—over 400 billion tonnes.",
+  "European emissions have flattened while emissions in emerging economies rise.",
+  "Africa contributes only 3–4% of global CO₂ emissions despite its population size.",
+  "International aviation and shipping emissions are excluded from national totals."
+],
   [  // Scene 2 annotations
     "This chart shows the sources of emissions in a selected country and year.",
     "Coal and oil are the dominant fuels for most countries."
