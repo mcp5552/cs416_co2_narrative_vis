@@ -14,20 +14,20 @@ const annotations = [
   "This chart shows the rise of global CO₂ emissions since the Industrial Revolution.",
   "Global CO₂ emissions were negligible before the Industrial Revolution.",
   "In 1950, global emissions totaled about 6 billion tons—quadrupling by 1990.",
-  "Today, we emit over 35 billion tons of CO₂ per year globally.",
   "Until 1950, Europe and the US accounted for over 85% of emissions.",
   "China surpassed Germany in emissions during the 1970s.",
   "Asia now produces more than half of global CO₂ emissions.",
   "The United States has the highest historical CO₂ emissions—over 400 billion tons.",
   "European emissions have flattened while emissions in emerging economies rise.",
   "Africa contributes only 3–4% of global CO₂ emissions despite its population size.",
+  "Today, we emit over 35 billion tons of CO₂ per year globally.",
   "International aviation and shipping emissions are excluded from national totals."
   ],
   [ // Scene 2 annotations
   "This chart breaks down CO₂ emissions by fuel source for a selected country and year, including coal, oil, gas, cement, flaring, and other industries.",
   "Globally, coal accounts for about 40–41% of total CO₂ emissions, making it the single largest contributor among fossil fuels.",
-  "Oil contributes roughly 32% of global emissions, driven largely by transportation and industrial sectors.",
-  "Natural gas makes up around 21–23% of global emissions, and its share is increasing in many countries.",
+  "Oil contributes roughly 32% of global CO₂ emissions, driven largely by transportation and industrial sectors.",
+  "Natural gas makes up around 21–23% of global CO₂ emissions, and its share is increasing in many countries.",
   "Cement production contributes around 4–8% of global CO₂ emissions, mostly from chemical processes and heating requirements.",
   "Flaring and other industrial sources typically account for 2–3%, varying by country and sector.",
   "In Asia, coal remains dominant, especially in rapidly industrializing nations, explaining large coal segments in many countries' fuel mixes.",
@@ -36,16 +36,16 @@ const annotations = [
   "Countries with low shares of renewables or nuclear tend to show more coal or oil in their emissions breakdown, reflecting higher carbon intensity."
   ],
   [  // Scene 3 annotations
-    "Per capita emissions reveal the average carbon footprint of individuals in each country.",
-    "The U.S. has consistently had among the highest per-person emissions for over a century.",
-    "Oil-rich countries like Qatar and the UAE have extremely high per capita emissions despite small populations.",
-    "India and many Sub-Saharan African nations emit less than 1 tons per person—over 100× less than top emitters.",
-    "Wealthier countries tend to emit more CO₂ per person due to industrial output, energy usage, and consumption.",
-    "Some high-income nations like France and Portugal have relatively low per capita emissions, thanks to nuclear and renewables.",
-    "There is growing divergence: while total global emissions rise, many individuals in poorer countries emit very little.",
-    "From 1950 to today, China’s per capita emissions rose rapidly, eventually surpassing the global average.",
-    "Australia, Canada, and the U.S. remain among the top emitters per person, at over 15 tons per year.",
-    "Reducing per capita emissions is critical for meeting global climate goals, especially in high-emitting countries."
+  "Per capita emissions reveal the average carbon footprint of individuals in each country.",
+  "The U.S. has consistently had among the highest per-person emissions for over a century.",
+  "Oil-rich countries like Qatar and the UAE have extremely high per capita emissions despite small populations.",
+  "India and many Sub-Saharan African nations emit less than 1 tons per person—over 100× less than top emitters.",
+  "Wealthier countries tend to emit more CO₂ per person due to industrial output, energy usage, and consumption.",
+  "Some high-income nations like France and Portugal have relatively low per capita emissions, thanks to nuclear and renewables.",
+  "There is growing divergence: while total global emissions rise, many individuals in poorer countries emit very little.",
+  "From 1950 to today, China’s per capita emissions rose rapidly, eventually surpassing the global average.",
+  "Australia, Canada, and the U.S. remain among the top emitters per person, at over 15 tons per year.",
+  "Reducing per capita emissions is critical for meeting global climate goals, especially in high-emitting countries."
   ],
 ];
 
