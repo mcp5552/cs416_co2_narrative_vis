@@ -13,12 +13,12 @@ const annotations = [
   [ // Scene 1 annotations
   "This chart shows the rise of global CO₂ emissions since the Industrial Revolution.",
   "Global CO₂ emissions were negligible before the Industrial Revolution.",
-  "In 1950, global emissions totaled about 6 billion tonnes—quadrupling by 1990.",
-  "Today, we emit over 35 billion tonnes of CO₂ per year globally.",
+  "In 1950, global emissions totaled about 6 billion tons—quadrupling by 1990.",
+  "Today, we emit over 35 billion tons of CO₂ per year globally.",
   "Until 1950, Europe and the US accounted for over 85% of emissions.",
   "China surpassed Germany in emissions during the 1970s.",
   "Asia now produces more than half of global CO₂ emissions.",
-  "The United States has the highest historical CO₂ emissions—over 400 billion tonnes.",
+  "The United States has the highest historical CO₂ emissions—over 400 billion tons.",
   "European emissions have flattened while emissions in emerging economies rise.",
   "Africa contributes only 3–4% of global CO₂ emissions despite its population size.",
   "International aviation and shipping emissions are excluded from national totals."
@@ -39,12 +39,12 @@ const annotations = [
     "Per capita emissions reveal the average carbon footprint of individuals in each country.",
     "The U.S. has consistently had among the highest per-person emissions for over a century.",
     "Oil-rich countries like Qatar and the UAE have extremely high per capita emissions despite small populations.",
-    "India and many Sub-Saharan African nations emit less than 1 tonne per person—over 100× less than top emitters.",
+    "India and many Sub-Saharan African nations emit less than 1 tons per person—over 100× less than top emitters.",
     "Wealthier countries tend to emit more CO₂ per person due to industrial output, energy usage, and consumption.",
     "Some high-income nations like France and Portugal have relatively low per capita emissions, thanks to nuclear and renewables.",
     "There is growing divergence: while total global emissions rise, many individuals in poorer countries emit very little.",
     "From 1950 to today, China’s per capita emissions rose rapidly, eventually surpassing the global average.",
-    "Australia, Canada, and the U.S. remain among the top emitters per person, at over 15 tonnes per year.",
+    "Australia, Canada, and the U.S. remain among the top emitters per person, at over 15 tons per year.",
     "Reducing per capita emissions is critical for meeting global climate goals, especially in high-emitting countries."
   ],
 ];
